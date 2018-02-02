@@ -37,11 +37,23 @@ write.xlsx(tweetsnfl.df, file = "nflTweetsExcel.xlsx")
 # Text analysis
 library(tm)
 
+# Tidy data process
+# general unicode conversion
+library(stringi)
+corpusNFL <- stri_trans_general(corpusNFL, "latin-ascii")
+corpusNFL <- Corpus(VectorSource(corpusNFL))
+
 # build a corpus and specify the source to be character vectors
 corpusNFL <- Corpus(VectorSource(tweetsnfl.df$text))
 
 # remove punctuation
 corpusNFL <- tm_map(corpusNFL, removePunctuation)
+
+
+# convert to lower case 
+#corpusNFL <- tm_map(corpusNFL, content_transformer(tolower))
+
+corpusNFL <- tm_map(corpusNFL, tolower)
 
 # remove numbers
 corpusNFL <- tm_map(corpusNFL, removeNumbers)
@@ -53,25 +65,19 @@ removeURL <- function(x)
 # remove URLs
 corpusNFL <- tm_map(corpusNFL, content_transformer(removeURL))
 
+# remove stopwords
+corpusNFL <- tm_map(corpusNFL, removeWords, stopwords("english"))
 
+# keep a copy of corpus to use later as a dictionary for stemming and lemmatization
+corpusNFLCopy <- corpusNFL
 
-# convert to lower case 
-#corpusNFL <- tm_map(corpusNFL, content_transformer(tolower))
-corpusNFL <- tm_map(corpusNFL, tolower)
-
-
-
-
-# add two extra stop words: 'available' and 'via'
-myStopwords <- c(stopwords("english"), "available", "via")
-# remove 'r' and 'big' from stopwords
-myStopwords <- setdiff(myStopwords, c("r", "big"))
-# remove stopwords from corpus
-myCorpus <- tm_map(myCorpus, removeWords, myStopwords)
-#
-#￼# keep a copy of corpus to use later as a dictionary for stem
-# completion
-myCorpusCopy <- myCorpus
 # stem words
-myCorpus <- tm_map(myCorpus, stemDocument)
+corpusNFL <- tm_map(corpusNFL, stemDocument)
+
+# inspect the first documents (code below is used for to make text fit for paper width)
+inspect(corpusNFL[1:5])
+for (i in 1:5) {
+  cat(paste("[[", i, "]]", sep = ""))
+  writeLines(as.character(corpusNFL[[i]]))
+}
 
