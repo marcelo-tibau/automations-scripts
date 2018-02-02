@@ -40,7 +40,7 @@ library(tm)
 # Tidy data process
 # general unicode conversion
 library(stringi)
-corpusNFL <- stri_trans_general(corpusNFL, "latin-ascii")
+corpusNFL <- stri_trans_general(corpusNFL, "latin-ascii") # check other methods
 corpusNFL <- Corpus(VectorSource(corpusNFL))
 
 # build a corpus and specify the source to be character vectors
@@ -81,3 +81,51 @@ for (i in 1:5) {
   writeLines(as.character(corpusNFL[[i]]))
 }
 
+# Stem completion
+corpusNFL <- tm_map(corpusNFL, content_transformer(stemCompletion), dictionary = corpusNFLCopy, lazy = TRUE)
+
+# exploring jtimberlak in the dictionary
+jtimberlakCases <- tm_map(corpusNFLCopy, grep, pattern = "jtimberlak") 
+# sum(unlist(jtimberlakCases))
+unlist(jtimberlakCases)
+
+inspect(corpusNFLCopy[[3:5]])
+for (i in 3:5) {
+  cat(paste("[[", i, "]]", sep = ""))
+  writeLines(as.character(corpusNFLCopy[[i]]))
+}
+
+inspect(corpusNFLCopy[[41]])
+for (i in 41) {
+  cat(paste("[[", i, "]]", sep = ""))
+  writeLines(as.character(corpusNFLCopy[[i]]))
+}
+
+corpusNFL <- tm_map(corpusNFL, gsub, pattern = "jtimberlak", replacement = "jtimberlake")
+
+inspect(corpusNFLtidy[[2]])
+for (i in 2) {
+  cat(paste("[[", i, "]]", sep = ""))
+  writeLines(as.character(corpusNFLtidy[[i]]))
+}
+
+# Tidying documents to create a tdm
+library(quanteda)
+library(dplyr)
+library(tidytext)
+
+corpusNFLtidy <- tidy(corpusNFLtidy) # check in other methods
+
+# Create function to remove doc [2]
+removeDoc2 <- function(x)
+  gsub("������", "", x)
+
+# remove doc [2]
+corpusNFLtidy <- tm_map(corpusNFL, content_transformer(removeDoc2))
+
+# steeler CamHeyward WizardOfBoz tell BAD joke ������
+#corpusNFL <- tm_map(corpusNFL, gsub, pattern = "jtimberlak", replacement = "jtimberlake")
+corpusNFLtidy <- tm_map(corpusNFLtidy, gsub, pattern = "steeler CamHeyward WizardOfBoz tell BAD joke ������", replacement = "steeler CamHeyward WizardOfBoz tell BAD joke")
+
+# create a term document matrix (tdm)
+tdm <- TermDocumentMatrix(corpusNFL, control = list(wordLengths = c(1, Inf)))
