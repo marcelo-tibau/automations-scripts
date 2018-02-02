@@ -114,7 +114,7 @@ library(quanteda)
 library(dplyr)
 library(tidytext)
 
-corpusNFLtidy <- tidy(corpusNFLtidy) # check in other methods
+corpusNFLtidy <- tidy(corpusNFLtidy) # 2
 
 # Create function to remove doc [2]
 removeDoc2 <- function(x)
@@ -127,5 +127,45 @@ corpusNFLtidy <- tm_map(corpusNFL, content_transformer(removeDoc2))
 #corpusNFL <- tm_map(corpusNFL, gsub, pattern = "jtimberlak", replacement = "jtimberlake")
 corpusNFLtidy <- tm_map(corpusNFLtidy, gsub, pattern = "steeler CamHeyward WizardOfBoz tell BAD joke ������", replacement = "steeler CamHeyward WizardOfBoz tell BAD joke")
 
+corpusNFLtidy <- stri_trans_general(corpusNFLtidy, "latin-ascii") # 1
+corpusNFLtidy <- Corpus(VectorSource(corpusNFLtidy)) # 3
+
 # create a term document matrix (tdm)
-tdm <- TermDocumentMatrix(corpusNFL, control = list(wordLengths = c(1, Inf)))
+tdm <- TermDocumentMatrix(corpusNFLtidy, control = list(wordLengths = c(1, Inf)))
+
+## Frequency words and Association
+idx <- which(dimnames(tdm)$Terms == "s")
+
+# inspect(tdm[idx + (0:5), 101:110])
+(freq.terms <- findFreqTerms(tdm, lowfreq=5))
+
+termF <- rowSums(as.matrix(tdm))
+termF <- subset(termF, termF >= 5)
+dftF <- data.frame(term = names(termF), freq = termF)
+
+# Exploratory plots
+
+# Terms frequency
+library(ggplot2)
+ggplot(dftF, aes(x=term, y=freq)) + geom_bar(stat = "identity") + xlab("Terms") + ylab("Count") + coord_flip()
+
+# Terms connections by frequency
+
+# source("https://bioconductor.org/biocLite.R")
+# biocLite("graph")
+
+# source("https://bioconductor.org/biocLite.R")
+# biocLite("Rgraphviz")
+
+library(graph)
+library(Rgraphviz)
+plot(tdm, term = termF, corThreshold = 0.12, weighting = T)
+
+plot(dftF, term = termF, corThreshold = 0.12, weighting = T)
+
+# Wordcloud
+library(wordcloud)
+sb <- as.matrix(tdm)
+# calculate the frequency of words and sort it by frequency
+wordFreq <- sort(rowSums(sb), decreasing = T)
+wordcloud(words = names(wordFreq), freq = wordFreq, min.freq = 3, random.order = F)
