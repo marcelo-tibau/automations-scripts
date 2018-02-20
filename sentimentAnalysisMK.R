@@ -26,8 +26,10 @@ sentiments <- function(words, niceText, notNiceText) {
 
 # sentiment plot
 sentiments(dftF$term, nice, notNice)
+sentiments(dftFtwo$term, nice, notNice)
+sentiments(dftFthree$term, nice, notNice)
 
-sentimentsDF <- data_frame(Score = sentiments(dftF$term, nice, notNice), Twitter = "Mary Kay")
+sentimentsDF <- data_frame(Score = c(sentiments(dftF$term, nice, notNice), sentiments(dftFtwo$term, nice, notNice), sentiments(dftFthree$term, nice, notNice)), Twitter = "Mary Kay")
 
 ggplot(sentimentsDF) +
   geom_col(aes(y = Score, x = Twitter, fill = Score)) +
