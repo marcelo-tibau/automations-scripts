@@ -26,6 +26,7 @@ date <- as.character(date)
 name <- paste(date, ".RData")
 
 save(tweetsmk.df, file = name)
+save(tweetmk.df, file = "mk.R")
 
 ## As csv
 write.csv(tweetsmk.df, file = "mkTweets.csv")
