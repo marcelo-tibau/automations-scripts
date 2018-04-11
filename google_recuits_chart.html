@@ -37,6 +37,8 @@
         var url = "https://docs.google.com/spreadsheets/d/1DnUhQjZkaQx9_hIM916z7lnZ10wU13PSabqJGlSfiT4/edit?usp=sharing";
         //var query = new google.visualization.Query(url + '#gid=0&headers=1&tq=' + queryString);
         var query = new google.visualization.Query(url + queryString);
+        //var query = new google.visualization.Query(url);
+        //var query = new google.visualization.Query(          'https://docs.google.com/spreadsheets/d/1DnUhQjZkaQx9_hIM916z7lnZ10wU13PSabqJGlSfiT4/gviz/tq?sheet=yearsFull&headers=1&tq=' + queryString);
         query.send(handleQueryResponse);
       }
       function handleQueryResponse(response) {
@@ -45,15 +47,15 @@
           return;
         }
         var data = new google.visualization.DataTable();
-        data.addColumn('date', 'Date');
-        data.addColumn('number', 'Month');
-        data.addColumn('number', 'Day');
-        data.addColumn('number', 'Recruits');
-        data.addColumn('number', 'Monthly Record Lows');
-        data.addColumn('number', 'Monthly Record Highs');
+        data.addColumn({type: 'date', label: 'Date'});
+        data.addColumn({type: 'number', label: 'Month'});
+        data.addColumn({type: 'number', label: 'Day'});
+        data.addColumn({type: 'number', label: 'Recruits'});
+        data.addColumn({type: 'number', label: 'Monthly Record Lows'});
+        data.addColumn({type: 'number', label: 'Monthly Record Highs'});
         var raw_data = response.getDataTable();
         var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-        
+          
         var options = {
           height: 600,
           width: 1500,
@@ -69,7 +71,7 @@
             6: { type: 'line', color: '#e50000', lineWidth: 5 }
           },
           hAxis: { 
-            gridlines: { count: 12, color: 'white' }
+            gridlines: { count: 4, color: 'white' }
             //format: 'date' 
           },
           vAxis: { gridlines: { count: 6, color: 'white' } },
@@ -87,7 +89,7 @@
 
     <h1 style="font-family: Arial; font-size: 28px; margin-left: 5%; margin-top: 30px;">Mary Kay Brasil Recruits in 2018</h1>
 
-    <p style="font-family: Arial; font-size: 16px; margin-left: 5%;">Created by FLAGCX.</p>
+    <p style="font-family: Arial; font-size: 16px; margin-left: 5%;"></p>
 
     <!--Div that will hold the chart-->
     <div id="chart_div"></div>
