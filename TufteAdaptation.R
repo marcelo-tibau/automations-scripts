@@ -67,7 +67,8 @@ dgr_fmt <- function(x, ...) {
 }
 
 # create y-axis variable
-a <- dgr_fmt(seq(-20, 100, by = 10))
+#a <- dgr_fmt(seq(-20, 100, by = 10))
+a <- dgr_fmt(seq(40, 100, by = 10))
 
 # create a small dataframe to represent legend symbol for 2018 Temperature
 legend_data <- data.frame(x = seq(175, 182), y = rnorm(8, 15, 2))
@@ -102,12 +103,12 @@ print(p)
 
 # Chart - step 4 current year temperature data
 p <- p +
-  geom_hline(yintercept = -20, colour = "white", linetype = 1) +
-  geom_hline(yintercept = -10, colour = "white", linetype = 1) +
-  geom_hline(yintercept = 0, colour = "white", linetype = 1) +
-  geom_hline(yintercept = 10, colour = "white", linetype = 1) +
-  geom_hline(yintercept = 20, colour = "white", linetype = 1) +
-  geom_hline(yintercept = 30, colour = "white", linetype = 1) +
+  #geom_hline(yintercept = -20, colour = "white", linetype = 1) +
+  #geom_hline(yintercept = -10, colour = "white", linetype = 1) +
+  #geom_hline(yintercept = 0, colour = "white", linetype = 1) +
+  #geom_hline(yintercept = 10, colour = "white", linetype = 1) +
+  #geom_hline(yintercept = 20, colour = "white", linetype = 1) +
+  #geom_hline(yintercept = 30, colour = "white", linetype = 1) +
   geom_hline(yintercept = 40, colour = "white", linetype = 1) +
   geom_hline(yintercept = 50, colour = "white", linetype = 1) +
   geom_hline(yintercept = 60, colour = "white", linetype = 1) +
@@ -137,13 +138,58 @@ print(p)
 
 # Chart - step 6 dress up the axis labels
 p <- p +
-  coord_cartesian(ylim = c(-20, 100)) +
-  scale_y_continuous(breaks = seq(-20, 100, by = 10), labels = a) +
+  coord_cartesian(ylim = c(40, 100)) +
+  scale_y_continuous(breaks = seq(40, 100, by = 10), labels = a) +
   scale_x_continuous(expand = c(0, 0),
                      breaks = c(15,45,75,105,135,165,195,228,258,288,320,350),
                      labels = c("January", "February", "March", "April",
                                 "May", "June", "July", "August", "September",
                                 "October", "November", "December"))
+
+print(p)
+
+# Chart - step 7 identify the days in which the current year had the record high and low temperature
+p <- p +
+  geom_point(data = PresentLows, aes(x = newDay, y = Temp), colour = "blue3") +
+  geom_point(data = PresentHighs, aes(x = newDay, y = Temp), colour = "firebrick3")
+
+print(p)
+
+# Chart - step 8 dress up the graphic with the appropriate text
+p <- p +
+  ggtitle("Rio de Janeiro's Weather in 2018") +
+  theme(plot.title = element_text(face = "bold", hjust = .012, vjust = .8, colour = "#3C3C3C", size = 20)) +
+  annotate("text", x = 19, y = 98, label = "Temperature", size = 4, fontface = "bold")
+
+# Chart - step 9 provides a little explanation about the data
+p <- p +
+  annotate("text", x = 132, y = 96, 
+           label = "Data represents average daily temperatures. Accessible data dates back to January 1, 1995. Data for 2018 is only available through March 20.", size=3, colour="gray30") +
+  annotate("text", x = 132, y = 94, 
+           label = "We had 34 days as the hottest since 1995 while had 1 day as the coldest.", size=3, colour="gray30")
+
+
+# Chart - step 10 annotations to explain highs and lows
+# p <- p +
+#  annotate("segment", x = 30, xend = 40, y = -5, yend = -10, colour = "blue3") +
+#  annotate("text", x = 65, y = -10, label = "We had 35 days that were the", size=3, colour="blue3") +
+#  annotate("text", x = 56, y = -14, label = "coldest since 1995", size=3, colour="blue3") +
+#  annotate("segment", x = 302, xend = 307, y = 74, yend = 82, colour = "firebrick3") +
+#  annotate("text", x = 333, y = 82, label = "We had 19 days that were the", size=3, colour="firebrick3") +
+#  annotate("text", x = 324, y = 78, label = "hottest since 1995", size=3, colour="firebrick3")
+
+# Chart - step 11 add a legend to explain the difference between the different data point layers
+p <- p +
+  annotate("segment", x = 181, xend = 181, y = 45, yend = 65, colour = "wheat2", size = 3) +
+  annotate("segment", x = 181, xend = 181, y = 57.7, yend = 52.2, colour = "wheat4", size = 3) +
+  geom_line(data = legend_data, aes(x = x, y = y)) +
+  annotate("segment", x = 183, xend = 185, y = 57.7, yend = 57.7, colour = "wheat4", size = .5) +
+  annotate("segment", x = 183, xend = 185, y = 52.2, yend = 52.2, colour = "wheat4", size = .5) +
+  annotate("segment", x = 185, xend = 185, y = 52.2, yend = 57.7, colour = "wheat4", size = .5) +
+  annotate("text", x = 196, y = 54.75, label = "NORMAL RANGE", size = 2, colour = "gray30") +
+  annotate("text", x = 162, y = 54.75, label = "2018 TEMPERATURE", size=2, colour="gray30") +
+  annotate("text", x = 193, y = 65, label = "RECORD HIGH", size=2, colour="gray30") +
+  annotate("text", x = 193, y = 45, label = "RECORD LOW", size=2, colour="gray30")
 
 print(p)
 
