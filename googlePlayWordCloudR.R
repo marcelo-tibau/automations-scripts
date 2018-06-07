@@ -28,6 +28,9 @@ library(wordcloud)
 library(wordcloud2)
 
 wordcloud2(freqTable, size = 1, fontFamily = "Helvetica Neue",
+           color = "white", backgroundColor = "black")
+
+wordcloud2(freqTable, size = 1, fontFamily = "Helvetica Neue",
            color = "random-light", backgroundColor = "black")
 
 wordcloud(words = freqTable$word, freq = freqTable$freq, min.freq = 2, random.order = FALSE,
