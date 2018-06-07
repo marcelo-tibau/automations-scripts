@@ -25,6 +25,10 @@ freqTable <- data.frame(word = names(words), freq = words)
 
 # create wordcloud
 library(wordcloud)
+library(wordcloud2)
+
+wordcloud2(freqTable, size = 1, fontFamily = "Helvetica Neue",
+           color = "random-light", backgroundColor = "black")
 
 wordcloud(words = freqTable$word, freq = freqTable$freq, min.freq = 2, random.order = FALSE,
           rot.per = 0.35, colors = brewer.pal(8, "Dark2"))
